@@ -5,7 +5,8 @@ import {
   collection, getDocs, addDoc, updateDoc, deleteDoc,
   doc, query, orderBy
 } from "firebase/firestore";
-import { db } from "@/firebase";
+import { db, storage } from "@/firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type AdminTab = "projects" | "certificates" | "tech";
@@ -141,19 +142,68 @@ function DeleteConfirm({ name, onConfirm, onCancel }: {
   );
 }
 
-// ─── File Upload Helper ────────────────────────────────────────────────────────
-async function uploadFile(file: File): Promise<string> {
-  const formData = new FormData();
-  formData.append("file", file);
-  const res = await fetch("/api/upload", {
-    method: "POST",
-    body: formData
+// ─── Image Compressor Helper ──────────────────────────────────────────────────
+async function compressImage(file: File): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const maxW = 1600;
+        let w = img.width;
+        let h = img.height;
+        if (w > maxW) {
+          h = (maxW / w) * h;
+          w = maxW;
+        }
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        ctx?.drawImage(img, 0, 0, w, h);
+        canvas.toBlob((blob) => {
+          if (blob) resolve(blob);
+          else reject(new Error("Gagal mengompresi gambar"));
+        }, "image/webp", 0.8);
+      };
+      img.onerror = (err) => reject(err);
+    };
+    reader.onerror = (err) => reject(err);
   });
-  const data = await res.json();
-  if (!res.ok || data.error) {
-    throw new Error(data.error || "Gagal mengunggah file.");
+}
+
+// ─── File Upload Helper (Firebase Storage) ────────────────────────────────────
+async function uploadFile(file: File): Promise<string> {
+  const isImage = file.type.startsWith("image/");
+  let uploadData: Blob | File = file;
+  let fileName = file.name;
+
+  if (isImage) {
+    try {
+      uploadData = await compressImage(file);
+      const dotIdx = file.name.lastIndexOf(".");
+      const base = dotIdx !== -1 ? file.name.substring(0, dotIdx) : file.name;
+      fileName = `${base}_${Date.now()}.webp`;
+    } catch (err) {
+      console.warn("Gagal mengompresi gambar di client, mengunggah file asli:", err);
+      const dotIdx = file.name.lastIndexOf(".");
+      const base = dotIdx !== -1 ? file.name.substring(0, dotIdx) : file.name;
+      const ext = dotIdx !== -1 ? file.name.substring(dotIdx) : "";
+      fileName = `${base}_${Date.now()}${ext}`;
+    }
+  } else {
+    const dotIdx = file.name.lastIndexOf(".");
+    const base = dotIdx !== -1 ? file.name.substring(0, dotIdx) : file.name;
+    const ext = dotIdx !== -1 ? file.name.substring(dotIdx) : "";
+    fileName = `${base}_${Date.now()}${ext}`;
   }
-  return data.url;
+
+  const storageRef = ref(storage, `assets/${fileName}`);
+  const snapshot = await uploadBytes(storageRef, uploadData);
+  const downloadURL = await getDownloadURL(snapshot.ref);
+  return downloadURL;
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -182,9 +232,13 @@ function ProjectsTab() {
 
   useEffect(() => { load(); }, [load]);
 
+  const webapp = items.filter(i => i.category === "webapp");
+  const photography = items.filter(i => i.category === "photography");
+  const videography = items.filter(i => i.category === "videography");
+
   const openAdd = () => {
     setForm({
-      title: "", desc: "", tags: [], img: "", category: "webapp", order: items.length + 1,
+      title: "", desc: "", tags: [], img: "", category: "webapp", order: webapp.length + 1,
       content: "", contributions: "", liveUrl: "", githubUrl: "", gallery: [], year: new Date().getFullYear().toString()
     });
     setTagsInput("");
@@ -234,24 +288,33 @@ function ProjectsTab() {
     load();
   };
 
-  return (
-    <div>
-      <SectionHeader title="Projects" count={items.length} onAdd={openAdd} />
-      {loading ? (
-        <div className="space-y-3">
-          {[1,2,3].map(i => <div key={i} className="h-20 rounded-xl bg-white/3 animate-pulse" />)}
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {items.map(item => (
-            <div key={item.id} className="flex items-center gap-4 p-4 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors">
+  const renderProjectList = (title: string, list: Project[], emoji: string) => (
+    <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-6 mb-6">
+      <div className="flex items-center justify-between mb-4 pb-2 border-b border-white/5">
+        <h3 className="text-white font-semibold text-sm flex items-center gap-2">
+          <span className="text-red-400">{emoji}</span> {title}
+        </h3>
+        <span className="text-[11px] px-2 py-0.5 rounded-full bg-white/5 text-white/40 font-medium">
+          {list.length} Project{list.length !== 1 ? "s" : ""}
+        </span>
+      </div>
+      <div className="space-y-3">
+        {list.length === 0 ? (
+          <p className="text-white/30 text-xs py-6 text-center">Belum ada project di kategori ini</p>
+        ) : (
+          list.map(item => (
+            <div key={item.id} className="flex items-center gap-4 p-3.5 rounded-xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-colors">
               <img src={item.img} alt={item.title} className="w-16 h-12 object-cover rounded-lg shrink-0 bg-white/5" />
               <div className="flex-1 min-w-0">
-                <p className="text-white font-medium text-sm truncate">{item.title}</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <Badge>{item.category}</Badge>
-                  {item.tags.slice(0, 2).map(t => <Badge key={t}>{t}</Badge>)}
-                  {item.tags.length > 2 && <span className="text-white/20 text-[10px]">+{item.tags.length - 2}</span>}
+                <div className="flex items-center gap-2">
+                  <p className="text-white font-medium text-sm truncate">{item.title}</p>
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white/50 font-mono">
+                    Urutan: {item.order}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 mt-1">
+                  {item.tags.slice(0, 3).map(t => <Badge key={t}>{t}</Badge>)}
+                  {item.tags.length > 3 && <span className="text-white/20 text-[10px]">+{item.tags.length - 3}</span>}
                 </div>
               </div>
               <div className="flex gap-2 shrink-0">
@@ -269,7 +332,24 @@ function ProjectsTab() {
                 </ActionBtn>
               </div>
             </div>
-          ))}
+          ))
+        )}
+      </div>
+    </div>
+  );
+
+  return (
+    <div>
+      <SectionHeader title="Projects" count={items.length} onAdd={openAdd} />
+      {loading ? (
+        <div className="space-y-3">
+          {[1,2,3].map(i => <div key={i} className="h-20 rounded-xl bg-white/3 animate-pulse" />)}
+        </div>
+      ) : (
+        <div className="mt-6">
+          {renderProjectList("Web App", webapp, "💻")}
+          {renderProjectList("Photography", photography, "📸")}
+          {renderProjectList("Videography", videography, "🎥")}
         </div>
       )}
 
@@ -282,7 +362,21 @@ function ProjectsTab() {
             <textarea className={inputCls} rows={3} value={form.desc} onChange={e => setForm(f => ({ ...f, desc: e.target.value }))} required placeholder="Deskripsi singkat..." />
           </Field>
           <Field label="Kategori">
-            <select className={inputCls} value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value as Project["category"] }))}>
+            <select 
+              className={inputCls} 
+              value={form.category} 
+              onChange={e => {
+                const cat = e.target.value as Project["category"];
+                setForm(f => {
+                  const updated = { ...f, category: cat };
+                  if (modal === "add") {
+                    const list = items.filter(i => i.category === cat);
+                    updated.order = list.length + 1;
+                  }
+                  return updated;
+                });
+              }}
+            >
               <option value="webapp">Web App</option>
               <option value="photography">Photography</option>
               <option value="videography">Videography</option>

@@ -1,6 +1,7 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDZKuh5a7CUTynVHqalQyAimz297PN1S6U",
@@ -17,4 +18,5 @@ const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
 export const db = getFirestore(app);   // Firestore — untuk Step 2 (data)
 export const auth = getAuth(app);      // Auth     — untuk Step 3 (admin login)
+export const storage = getStorage(app); // Storage  — untuk Upload Media
 export default app;
