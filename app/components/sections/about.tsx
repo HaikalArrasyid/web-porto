@@ -122,7 +122,7 @@ export default function About() {
                 </div>
                 <div>
                   <h4 className="text-white/40 text-[10px] font-bold tracking-widest uppercase">Total Projects</h4>
-                  <p className="text-white/60 text-xs mt-1">Web, design, and editing delivered</p>
+                  <p className="text-white/60 text-xs mt-1">Web, photos, and videos delivered</p>
                 </div>
               </div>
               <span className="text-3xl sm:text-4xl font-extrabold text-white shrink-0">

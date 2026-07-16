@@ -12,15 +12,15 @@ export default function Hero() {
         {/* Left Column: Text Content */}
         <div className="text-center lg:text-left flex flex-col items-center lg:items-start w-full lg:w-auto max-w-xl lg:max-w-2xl">
           <div className="relative inline-block">
-            <div className="absolute -inset-2 rounded-2xl bg-red-400/25 blur-xl -z-10 w-2/3 mx-auto lg:mx-0" />
-            <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-white">
+            <div className="absolute -inset-2 rounded-2xl bg-red-400/25 blur-xl -z-10 w-full mx-auto lg:mx-0" />
+            <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold text-white">
               Full Stack
             </h1>
           </div>
 
           <div className="relative inline-block mt-2">
-            <div className="absolute -inset-2 rounded-2xl bg-red-400/25 blur-xl -z-10 w-1/2 mx-auto lg:mx-0" />
-            <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-red-400">
+            <div className="absolute -inset-2 rounded-2xl bg-red-400/25 blur-xl -z-10 w-full mx-auto lg:mx-0" />
+            <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold text-red-400">
               Developer
             </h1>
           </div>
@@ -44,7 +44,7 @@ export default function Hero() {
             />
           </h1>
 
-          <p className="text-white/70 text-base sm:text-lg md:text-xl mb-8 max-w-xl lg:max-w-2xl leading-relaxed">
+          <p className="text-white/70 text-sm sm:text-base md:text-lg mb-8 max-w-sm sm:max-w-xl lg:max-w-2xl leading-relaxed px-4 sm:px-0 mx-auto lg:mx-0">
             A Full Stack Developer student with a growing interest in building web application systems and collaborating within teams to bring ideas to life. Learning by building real projects with Next.js and NestJS, with an additional skill in professional photography.
           </p>
 
