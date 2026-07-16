@@ -49,7 +49,7 @@ export default function Hero() {
           </p>
 
           <div className="flex flex-wrap justify-center lg:justify-start gap-2.5 w-full">
-            {["React", "Javascript", "Node.js", "Tailwind"].map((tech) => (
+            {["Next.Js", "TypeScript", "Firebase", "Tailwind", "NestJS",].map((tech) => (
               <span
                 key={tech}
                 className="px-4 py-1 text-sm rounded-full bg-white/5 border border-white/10 text-white/80 hover:bg-white/10 transition-colors duration-300"
@@ -86,7 +86,7 @@ export default function Hero() {
 
             {/* Contact Button */}
             <a
-              href="mailto:haikalarrasyid@gmail.com"
+              href="mailto:arasyidhaikal00@gmail.com"
               className="group relative px-8 py-2.5 rounded-lg bg-[#0d0214] border border-red-500/30 shadow-[0_0_15px_rgba(248,113,113,0.15)] hover:shadow-[0_0_20px_rgba(248,113,113,0.3)] hover:border-red-400/50 cursor-pointer transition-all duration-300 block text-white"
             >
               <div className="flex items-center gap-2 text-sm font-medium">

@@ -19,10 +19,11 @@ const getTechIcon = (skill: string) => {
   if (s.includes("express")) return "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg";
   if (s.includes("postgres")) return "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg";
   if (s.includes("firebase")) return "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-original.svg";
-  if (s.includes("figma")) return "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg";
-  if (s.includes("photoshop")) return "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/photoshop/photoshop-original.svg";
-  if (s.includes("premiere")) return "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/premierepro/premierepro-original.svg";
-  if (s.includes("lightroom")) return "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/lightroom/lightroom-original.svg";
+  if (s.includes("figma")) return "/icons/figma.svg";
+  if (s.includes("lightroom")) return "/icons/lightroom.svg";
+  if (s.includes("davinci")) return "/icons/davinci.svg";
+  if (s.includes("capcut")) return "/icons/capcut.svg";
+  if (s.includes("canva")) return "/icons/canva.svg";
   if (s.includes("git") && !s.includes("github")) return "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg";
   if (s.includes("github")) return "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg";
   return null;
@@ -162,10 +163,20 @@ export default function Portofolio() {
         const q = query(collection(db, "techStack"), orderBy("order"));
         const snap = await getDocs(q);
         setTechStack(
-          snap.docs.map((doc) => ({
-            id: doc.id,
-            ...(doc.data() as Omit<TechCategory, "id">),
-          }))
+          snap.docs.map((doc) => {
+            const data = doc.data() as Omit<TechCategory, "id">;
+            if (data.category === "Design & Media Tools") {
+              return {
+                id: doc.id,
+                ...data,
+                skills: ["Figma", "Lightroom Classic", "DaVinci", "CapCut", "Canva"],
+              };
+            }
+            return {
+              id: doc.id,
+              ...data,
+            };
+          })
         );
       } catch (err) {
         console.error("Failed to fetch techStack:", err);

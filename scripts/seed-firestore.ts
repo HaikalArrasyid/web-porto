@@ -11,7 +11,13 @@
  */
 
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getFirestore, collection, addDoc, writeBatch, doc } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  writeBatch,
+  doc,
+} from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDZKuh5a7CUTynVHqalQyAimz297PN1S6U",
@@ -190,7 +196,15 @@ const certificates = [
 const techStack = [
   {
     category: "Frontend",
-    skills: ["React", "Next.js", "TypeScript", "JavaScript", "HTML", "CSS", "Tailwind CSS"],
+    skills: [
+      "React",
+      "Next.js",
+      "TypeScript",
+      "JavaScript",
+      "HTML",
+      "CSS",
+      "Tailwind CSS",
+    ],
     order: 1,
   },
   {
