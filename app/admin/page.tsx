@@ -291,59 +291,134 @@ function ProjectsTab() {
           <Field label="Tags (pisah dengan koma)">
             <input className={inputCls} value={tagsInput} onChange={e => setTagsInput(e.target.value)} placeholder="React, Next.js, Tailwind CSS" />
           </Field>
-          {form.category === "webapp" ? (
-            <Field label="Upload Gambar Utama (Local)">
-              <div className="flex flex-col gap-2">
-                <input
-                  type="file"
-                  accept="image/*"
-                  className={inputCls}
-                  onChange={async (e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      setUploading(true);
-                      try {
-                        const url = await uploadFile(file);
-                        setForm(f => ({ ...f, img: url }));
-                      } catch (err: any) {
-                        alert(err.message || "Upload gagal");
-                      } finally {
-                        setUploading(false);
-                      }
+          {/* Main Cover Image - File Upload for ALL categories */}
+          <Field label="Upload Gambar Utama (Cover/Thumbnail)">
+            <div className="flex flex-col gap-2">
+              <input
+                type="file"
+                accept="image/*"
+                className={inputCls}
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    setUploading(true);
+                    try {
+                      const url = await uploadFile(file);
+                      setForm(f => ({ ...f, img: url }));
+                    } catch (err: any) {
+                      alert(err.message || "Upload gagal");
+                    } finally {
+                      setUploading(false);
                     }
-                  }}
-                />
-                {uploading && <span className="text-red-400 text-xs animate-pulse">Mengunggah file...</span>}
-                {form.img && (
-                  <div className="flex items-center gap-3 p-2.5 rounded-xl border border-white/5 bg-white/[0.01]">
-                    <img src={form.img} alt="Preview" className="w-12 h-10 object-cover rounded-lg bg-white/5" />
-                    <span className="text-white/60 text-xs truncate flex-1">{form.img}</span>
-                  </div>
-                )}
-              </div>
-            </Field>
-          ) : (
-            <Field label="URL Gambar Utama (Link)">
-              <input className={inputCls} value={form.img} onChange={e => setForm(f => ({ ...f, img: e.target.value }))} required placeholder="https://..." />
-            </Field>
-          )}
+                  }
+                }}
+              />
+              {uploading && <span className="text-red-400 text-xs animate-pulse">Mengunggah file...</span>}
+              {form.img && (
+                <div className="flex items-center gap-3 p-2.5 rounded-xl border border-white/5 bg-white/[0.01]">
+                  <img src={form.img} alt="Preview" className="w-12 h-10 object-cover rounded-lg bg-white/5" />
+                  <span className="text-white/60 text-xs truncate flex-1">{form.img}</span>
+                </div>
+              )}
+            </div>
+          </Field>
+
           <Field label="Tahun Project">
             <input className={inputCls} value={form.year} onChange={e => setForm(f => ({ ...f, year: e.target.value }))} placeholder="2026" />
           </Field>
-          <Field label="Link Website (Live Demo)">
-            <input className={inputCls} value={form.liveUrl} onChange={e => setForm(f => ({ ...f, liveUrl: e.target.value }))} placeholder="https://..." />
-          </Field>
-          <Field label="Link GitHub">
-            <input className={inputCls} value={form.githubUrl} onChange={e => setForm(f => ({ ...f, githubUrl: e.target.value }))} placeholder="https://github.com/..." />
-          </Field>
+
+          {/* Conditional Links based on Category */}
+          {form.category === "webapp" && (
+            <>
+              <Field label="Link Website (Live Demo)">
+                <input className={inputCls} value={form.liveUrl} onChange={e => setForm(f => ({ ...f, liveUrl: e.target.value }))} placeholder="https://..." />
+              </Field>
+              <Field label="Link GitHub">
+                <input className={inputCls} value={form.githubUrl} onChange={e => setForm(f => ({ ...f, githubUrl: e.target.value }))} placeholder="https://github.com/..." />
+              </Field>
+            </>
+          )}
+
+          {form.category === "photography" && (
+            <Field label="Link Google Photo Album (Opsional)">
+              <input className={inputCls} value={form.liveUrl} onChange={e => setForm(f => ({ ...f, liveUrl: e.target.value }))} placeholder="https://photos.google.com/..." />
+            </Field>
+          )}
+
+          {form.category === "videography" && (
+            <>
+              <Field label="Video (Pilih salah satu: Upload File atau Masukkan URL)">
+                <div className="flex flex-col gap-2.5">
+                  {/* Option 1: File Upload */}
+                  <div className="flex flex-col gap-1.5 border border-white/5 bg-white/[0.01] p-3.5 rounded-xl">
+                    <span className="text-white/60 text-[10px] uppercase font-semibold tracking-wider">Opsi A: Upload File Video Lokal (MP4/WebM)</span>
+                    <input
+                      type="file"
+                      accept="video/*"
+                      className={inputCls}
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setUploading(true);
+                          try {
+                            const url = await uploadFile(file);
+                            setForm(f => ({ ...f, liveUrl: url }));
+                          } catch (err: any) {
+                            alert(err.message || "Upload video gagal");
+                          } finally {
+                            setUploading(false);
+                          }
+                        }
+                      }}
+                    />
+                    {uploading && <span className="text-red-400 text-xs animate-pulse">Mengunggah video...</span>}
+                  </div>
+
+                  {/* Option 2: Text Input */}
+                  <div className="flex flex-col gap-1.5 border border-white/5 bg-white/[0.01] p-3.5 rounded-xl">
+                    <span className="text-white/60 text-[10px] uppercase font-semibold tracking-wider">Opsi B: Atau Masukkan URL Video (YouTube / Vimeo / IG)</span>
+                    <input 
+                      className={inputCls} 
+                      value={form.liveUrl} 
+                      onChange={e => setForm(f => ({ ...f, liveUrl: e.target.value }))} 
+                      placeholder="https://www.youtube.com/watch?v=... atau https://..." 
+                    />
+                  </div>
+
+                  {/* Preview state if liveUrl is set */}
+                  {form.liveUrl && (
+                    <div className="flex items-center gap-3 p-2.5 rounded-xl border border-white/5 bg-white/[0.01]">
+                      <div className="w-12 h-8 rounded bg-white/5 flex items-center justify-center text-[9px] text-white/50 font-mono tracking-widest">
+                        {form.liveUrl.endsWith(".mp4") || form.liveUrl.endsWith(".webm") || form.liveUrl.startsWith("/assets/") ? "VIDEO" : "LINK"}
+                      </div>
+                      <span className="text-white/60 text-xs truncate flex-1">{form.liveUrl}</span>
+                    </div>
+                  )}
+                </div>
+              </Field>
+
+              <Field label="Link Postingan Asli / Instagram (Opsional - Terutama jika mengunggah file video lokal)">
+                <input 
+                  className={inputCls} 
+                  value={form.githubUrl} 
+                  onChange={e => setForm(f => ({ ...f, githubUrl: e.target.value }))} 
+                  placeholder="https://www.instagram.com/reel/... atau link postingan asli" 
+                />
+              </Field>
+            </>
+          )}
+
           <Field label="Deskripsi Detail (Halaman Detail)">
             <textarea className={inputCls} rows={4} value={form.content} onChange={e => setForm(f => ({ ...f, content: e.target.value }))} placeholder="Penjelasan lengkap tentang project..." />
           </Field>
+
           <Field label="Kontribusi Anda (Tulis baris per baris)">
             <textarea className={inputCls} rows={4} value={form.contributions} onChange={e => setForm(f => ({ ...f, contributions: e.target.value }))} placeholder="Membuat UI layout&#10;Inisialisasi API integration" />
           </Field>
-          {form.category === "webapp" ? (
-            <Field label="Upload Gambar Galeri Pendukung (Bisa pilih banyak file sekaligus)">
+
+          {/* Dynamic Gallery Image Upload for Web App and Photography */}
+          {(form.category === "webapp" || form.category === "photography") && (
+            <Field label={form.category === "webapp" ? "Upload Gambar Galeri Pendukung (Screenshots)" : "Upload Foto Album (Bisa pilih banyak file sekaligus)"}>
               <div className="flex flex-col gap-2.5">
                 <input
                   type="file"
@@ -395,15 +470,6 @@ function ProjectsTab() {
                   </div>
                 )}
               </div>
-            </Field>
-          ) : (
-            <Field label="Galeri Gambar Pendukung (Pisahkan dengan koma)">
-              <input 
-                className={inputCls} 
-                value={form.gallery ? form.gallery.join(", ") : ""} 
-                onChange={e => setForm(f => ({ ...f, gallery: e.target.value.split(",").map(url => url.trim()).filter(Boolean) }))} 
-                placeholder="https://img1.jpg, https://img2.jpg" 
-              />
             </Field>
           )}
           <Field label="Urutan (order)">

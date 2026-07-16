@@ -159,157 +159,126 @@ export default function Hero() {
 
         {/* Right Column: Visual Area (Terminal Console Mockup) */}
         <div className="w-full lg:w-auto flex justify-center items-center mt-12 lg:mt-0 relative px-4 sm:px-0">
-          {/* Decorative Blur Background */}
-          <div className="absolute w-72 h-72 bg-red-500/20 rounded-full blur-3xl -z-10" />
+          {/* Decorative Blur Backgrounds */}
+          <div className="absolute w-80 h-80 bg-red-500/25 rounded-full blur-3xl -z-10 animate-pulse duration-5000" />
+          <div className="absolute w-72 h-72 bg-amber-500/10 rounded-full blur-3xl -z-10 translate-x-12 -translate-y-12" />
           
-          {/* Terminal Main Window */}
-          <div className="w-full max-w-[460px] aspect-[4/3] rounded-2xl border border-white/10 bg-[#090211]/85 backdrop-blur-md p-5 shadow-2xl relative overflow-visible flex flex-col justify-between">
+          {/* Main Stack Container */}
+          <div className="relative w-full max-w-[500px] md:w-[480px] lg:w-[500px] aspect-[4/3] flex items-start justify-start select-none">
             
-            {/* Header Bar */}
-            <div className="flex items-center justify-between border-b border-white/5 pb-3">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
-                <span className="text-white/60 text-[10px] font-semibold uppercase tracking-wider">System Online</span>
-              </div>
-              <div className="text-white/40 text-[10px] font-mono">
-                IT CORE
-              </div>
-            </div>
-
-            {/* Terminal Body Container */}
-            <div className="flex-1 flex gap-4 mt-4 overflow-hidden relative">
-              
-              {/* Left Sub-window: Editor panel */}
-              <div className="flex-1 rounded-xl border border-white/5 bg-black/40 p-4 flex flex-col gap-3 font-mono relative">
-                <div className="text-[10px] text-white/40 border-b border-white/5 pb-1 flex items-center gap-1.5">
-                  <span className="text-red-400">&lt;/&gt;</span> build /app
+            {/* 1. Base Layer: Code Editor Window */}
+            <div className="w-[90%] aspect-[1.3] rounded-2xl border border-white/10 bg-zinc-950/90 backdrop-blur-md p-6 shadow-[0_0_40px_rgba(239,68,68,0.05)] hover:shadow-[0_0_50px_rgba(239,68,68,0.15)] flex flex-col justify-between transform -rotate-1 hover:rotate-0 hover:border-red-500/35 transition-all duration-500">
+              {/* IDE Header */}
+              <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-green-500/80" />
+                  <span className="text-white/80 text-[11px] font-mono ml-2">app/api/route.ts</span>
                 </div>
-                
-                {/* Code line bars (crimson red/grey bars) */}
-                <div className="flex flex-col gap-2.5">
-                  <div className="h-2 w-3/4 rounded-full bg-red-500/60" />
-                  <div className="h-2 w-11/12 rounded-full bg-white/10" />
-                  <div className="h-2 w-5/6 rounded-full bg-red-400/50" />
-                  <div className="h-2 w-1/2 rounded-full bg-white/15" />
-                  <div className="h-2 w-2/3 rounded-full bg-white/10" />
-                  <div className="h-2 w-3/4 rounded-full bg-red-500/60" />
-                </div>
-                
-                <div className="text-[9px] text-white/30 mt-auto">
-                  build ok
-                </div>
+                <div className="text-white/40 text-[10px] font-mono">TypeScript</div>
               </div>
 
-              {/* Right Sub-window: Status panel */}
-              <div className="w-[130px] rounded-xl border border-white/5 bg-black/40 p-3 flex flex-col gap-3 font-mono">
-                <div className="text-[10px] text-white/40 border-b border-white/5 pb-1 flex items-center gap-1.5 justify-between">
-                  <span>RUNTIME</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                </div>
-                
-                {/* Status bars */}
-                <div className="flex flex-col gap-2.5">
-                  <div>
-                    <div className="text-[8px] text-white/50 mb-0.5">CPU</div>
-                    <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
-                      <div className="h-full w-2/3 bg-red-500/60 rounded-full" />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-[8px] text-white/50 mb-0.5">MEM</div>
-                    <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
-                      <div className="h-full w-1/2 bg-red-400/50 rounded-full" />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-[8px] text-white/50 mb-0.5">FPS</div>
-                    <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
-                      <div className="h-full w-4/5 bg-red-500/70 rounded-full" />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="text-[8px] text-white/30 text-right mt-auto">
-                  latest: 3ms
-                </div>
+              {/* IDE Code Content */}
+              <div className="flex-1 font-mono text-[11px] sm:text-xs leading-relaxed text-left mt-4 space-y-1.5">
+                <div><span className="text-red-400">import</span> &#123; <span className="text-zinc-200">NextResponse</span> &#125; <span className="text-red-400">from</span> <span className="text-amber-200/90">"next/server"</span>;</div>
+                <div><span className="text-red-400">import</span> &#123; <span className="text-zinc-200">db</span> &#125; <span className="text-red-400">from</span> <span className="text-amber-200/90">"@/firebase"</span>;</div>
+                <div className="text-zinc-500">// Fullstack API Handler</div>
+                <div><span className="text-red-400">export async function</span> <span className="text-amber-300">GET</span>() &#123;</div>
+                <div className="pl-4"><span className="text-red-400">const</span> res = <span className="text-red-400">await</span> db.<span className="text-zinc-200">fetch</span>();</div>
+                <div className="pl-4"><span className="text-red-400">return</span> <span className="text-zinc-200">NextResponse</span>.<span className="text-zinc-200">json</span>(&#123; res &#125;);</div>
+                <div>&#125;</div>
               </div>
 
-            </div>
-
-            {/* Bottom console output line */}
-            <div className="mt-4 pt-2 border-t border-white/5 flex items-center justify-between text-[9px] text-white/50 font-mono">
-              <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-red-400/60" />
-                <span>Console output</span>
-              </div>
-              <div className="text-white/30">
-                ACTIVE
+              {/* IDE Status Footer */}
+              <div className="pt-2.5 border-t border-white/10 flex items-center justify-between text-[10px] text-white/50 font-mono">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                  <span>localhost:3000</span>
+                </div>
+                <div>UTF-8</div>
               </div>
             </div>
 
-            {/* Floating Pill Tags */}
+            {/* 2. Top Layer: Camera Viewfinder Overlay Card (Overlapping & Tilted) */}
+            <div className="absolute -bottom-6 -right-6 w-[54%] aspect-[1.1] rounded-2xl border border-white/15 bg-zinc-900/95 p-4.5 shadow-[0_15px_40px_rgba(0,0,0,0.65),0_0_25px_rgba(239,68,68,0.12)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.75),0_0_35px_rgba(239,68,68,0.22)] flex flex-col justify-between transform rotate-3 hover:rotate-1 hover:scale-105 hover:border-red-500/35 transition-all duration-500 z-10">
+              {/* Viewfinder Header */}
+              <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                  <span className="text-white/80 text-[10px] font-mono tracking-wider font-semibold">RAW VIEW</span>
+                </div>
+                <span className="text-[8.5px] text-white/40 font-mono">AF-S</span>
+              </div>
+
+              {/* Viewfinder Display Box */}
+              <div className="flex-1 rounded-lg border border-white/15 bg-zinc-950 relative flex flex-col items-center justify-center overflow-hidden my-2.5 min-h-[90px]">
+                {/* Dummy Photographic Image inside Viewfinder */}
+                <img 
+                  src="/assets/foto hero.jpg" 
+                  alt="Viewfinder target photography preview" 
+                  className="absolute inset-0 w-full h-full object-cover brightness-[0.65] contrast-[1.1]"
+                />
+
+                {/* Viewfinder Crop Marks */}
+                <div className="absolute top-1.5 left-1.5 w-2 h-2 border-t border-l border-white/60 z-10" />
+                <div className="absolute top-1.5 right-1.5 w-2 h-2 border-t border-r border-white/60 z-10" />
+                <div className="absolute bottom-1.5 left-1.5 w-2 h-2 border-b border-l border-white/60 z-10" />
+                <div className="absolute bottom-1.5 right-1.5 w-2 h-2 border-b border-r border-white/60 z-10" />
+                
+                {/* Center target indicator */}
+                <div className="w-4 h-4 rounded-full border border-dashed border-white/50 flex items-center justify-center z-10">
+                  <span className="text-white/80 text-[8px] font-light">+</span>
+                </div>
+
+                {/* Subtle red/amber lens glow overlay */}
+                <div className="absolute w-16 h-16 rounded-full bg-gradient-to-tr from-red-500/20 to-amber-500/15 blur-xl z-0 animate-pulse" />
+
+                {/* Aperture stats */}
+                <div className="absolute bottom-1.5 inset-x-2 flex justify-between text-[8px] text-white/90 font-mono z-10 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                  <span>1/250s</span>
+                  <span>f/1.8</span>
+                </div>
+              </div>
+
+              {/* ISO & EV settings */}
+              <div className="flex justify-between items-center text-[8.5px] text-white/50 font-mono">
+                <span>ISO 100</span>
+                <span>EV +0.3</span>
+              </div>
+            </div>
+
+            {/* Floating Pills - Positions modified to surround the stacked group */}
             
-            {/* Top-Left Floating Pill: CLI Shell */}
-            <div className="absolute -top-3.5 -left-4 px-2.5 py-1 rounded-full bg-[#0c0517]/95 border border-white/10 text-white/80 text-[10px] font-mono flex items-center gap-1 shadow-lg hover:border-red-400/50 transition-all duration-300">
-              <span className="text-red-400 font-semibold">&gt;_</span>
-              <span>CLI Shell</span>
+            {/* Top-Left: Next.js */}
+            <div className="absolute -top-5 -left-5 px-3 py-1 rounded-full bg-[#0c0517]/95 border border-white/15 text-white/95 text-[10.5px] font-mono flex items-center gap-1.5 shadow-xl hover:border-red-400/50 transition-all duration-300">
+              <span className="text-red-450 font-semibold">&lt;/&gt;</span>
+              <span>Next.js Code</span>
             </div>
 
-            {/* Top-Right Floating Pill: Cloud Sync */}
-            <div className="absolute top-8 -right-6 px-2.5 py-1 rounded-full bg-[#0c0517]/95 border border-white/10 text-white/80 text-[10px] font-mono flex items-center gap-1 shadow-lg hover:border-red-400/50 transition-all duration-300">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-3 h-3 text-red-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2.5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
-                />
+            {/* Top-Right: 50mm Lens */}
+            <div className="absolute top-4 right-1 px-3 py-1 rounded-full bg-[#0c0517]/95 border border-white/15 text-white/95 text-[10.5px] font-mono flex items-center gap-1.5 shadow-xl hover:border-red-400/50 transition-all duration-300">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5" className="w-3.5 h-3.5 text-red-400">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
               </svg>
-              <span>Cloud Sync</span>
+              <span>50mm f/1.8</span>
             </div>
 
-            {/* Bottom-Right Floating Pill: Secure */}
-            <div className="absolute bottom-12 -right-4 px-2.5 py-1 rounded-full bg-[#0c0517]/95 border border-white/10 text-white/80 text-[10px] font-mono flex items-center gap-1 shadow-lg hover:border-red-400/50 transition-all duration-300">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-3 h-3 text-red-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2.5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                />
+            {/* Bottom-Right: Lightroom */}
+            <div className="absolute -bottom-8 right-24 px-3 py-1 rounded-full bg-[#0c0517]/95 border border-white/15 text-white/95 text-[10.5px] font-mono flex items-center gap-1.5 shadow-xl hover:border-red-400/50 transition-all duration-300 z-20">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5" className="w-3.5 h-3.5 text-red-400">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 21m0 0l-.813-5.096L9 21zm0 0h-.75m.75 0h.75m-.75 0l3.75-18 3.75 18" />
               </svg>
-              <span>Secure</span>
+              <span>Lightroom Edit</span>
             </div>
 
-            {/* Bottom-Left Floating Pill: Server Node */}
-            <div className="absolute -bottom-3 -left-2 px-2.5 py-1 rounded-full bg-[#0c0517]/95 border border-white/10 text-white/80 text-[10px] font-mono flex items-center gap-1 shadow-lg hover:border-red-400/50 transition-all duration-300">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-3 h-3 text-red-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2.5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                />
+            {/* Bottom-Left: NestJS */}
+            <div className="absolute bottom-4 -left-8 px-3 py-1 rounded-full bg-[#0c0517]/95 border border-white/15 text-white/95 text-[10.5px] font-mono flex items-center gap-1.5 shadow-xl hover:border-red-400/50 transition-all duration-300">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5" className="w-3.5 h-3.5 text-red-400">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-.778.099-1.533.284-2.253" />
               </svg>
-              <span>Server Node</span>
+              <span>NestJS API</span>
             </div>
 
           </div>

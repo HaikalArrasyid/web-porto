@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
+import sharp from "sharp";
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,7 +13,7 @@ export async function POST(req: NextRequest) {
     }
 
     const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    let buffer = Buffer.from(bytes);
 
     // Save directory: public/assets
     const uploadDir = path.join(process.cwd(), "public", "assets");
@@ -21,19 +22,38 @@ export async function POST(req: NextRequest) {
     try {
       await mkdir(uploadDir, { recursive: true });
     } catch (err) {
-      // already exists or permission issue handled by try-catch
+      // already exists
     }
 
-    // Clean filename: remove spaces and special characters
-    const ext = path.extname(file.name);
-    const baseName = path.basename(file.name, ext).replace(/[^a-zA-Z0-9]/g, "_");
-    const uniqueFileName = `${baseName}_${Date.now()}${ext}`;
-    const filePath = path.join(uploadDir, uniqueFileName);
+    const originalExt = path.extname(file.name).toLowerCase();
+    const isImage = [".png", ".jpg", ".jpeg", ".webp", ".tiff", ".gif"].includes(originalExt);
+
+    let finalFileName = "";
+    const baseName = path.basename(file.name, originalExt).replace(/[^a-zA-Z0-9]/g, "_");
+
+    if (isImage) {
+      // Convert to webp with sharp and resize to max 1600px width for optimization
+      try {
+        buffer = await sharp(buffer)
+          .resize({ width: 1600, withoutEnlargement: true })
+          .webp({ quality: 80 })
+          .toBuffer();
+        
+        finalFileName = `${baseName}_${Date.now()}.webp`;
+      } catch (err) {
+        console.error("Sharp image conversion failed, saving original:", err);
+        finalFileName = `${baseName}_${Date.now()}${originalExt}`;
+      }
+    } else {
+      finalFileName = `${baseName}_${Date.now()}${originalExt}`;
+    }
+
+    const filePath = path.join(uploadDir, finalFileName);
 
     // Write file to assets
     await writeFile(filePath, buffer);
 
-    const publicUrl = `/assets/${uniqueFileName}`;
+    const publicUrl = `/assets/${finalFileName}`;
     return NextResponse.json({ url: publicUrl });
   } catch (error) {
     console.error("Upload handler error:", error);
