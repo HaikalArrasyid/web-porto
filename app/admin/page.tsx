@@ -5,8 +5,7 @@ import {
   collection, getDocs, addDoc, updateDoc, deleteDoc,
   doc, query, orderBy
 } from "firebase/firestore";
-import { db, storage } from "@/firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db } from "@/firebase";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type AdminTab = "projects" | "certificates" | "tech";
@@ -149,7 +148,7 @@ async function compressImage(file: File): Promise<Blob> {
     reader.readAsDataURL(file);
     reader.onload = (event) => {
       const img = new Image();
-      img.src = event.target?.result as string;
+      // Assign handlers BEFORE setting src to avoid race condition with cached images
       img.onload = () => {
         const canvas = document.createElement("canvas");
         const maxW = 1600;
@@ -169,41 +168,52 @@ async function compressImage(file: File): Promise<Blob> {
         }, "image/webp", 0.8);
       };
       img.onerror = (err) => reject(err);
+      img.src = event.target?.result as string;
     };
     reader.onerror = (err) => reject(err);
   });
 }
 
-// ─── File Upload Helper (Firebase Storage) ────────────────────────────────────
-async function uploadFile(file: File): Promise<string> {
-  const isImage = file.type.startsWith("image/");
-  let uploadData: Blob | File = file;
-  let fileName = file.name;
 
-  if (isImage) {
-    try {
-      uploadData = await compressImage(file);
-      const dotIdx = file.name.lastIndexOf(".");
-      const base = dotIdx !== -1 ? file.name.substring(0, dotIdx) : file.name;
-      fileName = `${base}_${Date.now()}.webp`;
-    } catch (err) {
-      console.warn("Gagal mengompresi gambar di client, mengunggah file asli:", err);
-      const dotIdx = file.name.lastIndexOf(".");
-      const base = dotIdx !== -1 ? file.name.substring(0, dotIdx) : file.name;
-      const ext = dotIdx !== -1 ? file.name.substring(dotIdx) : "";
-      fileName = `${base}_${Date.now()}${ext}`;
-    }
-  } else {
-    const dotIdx = file.name.lastIndexOf(".");
-    const base = dotIdx !== -1 ? file.name.substring(0, dotIdx) : file.name;
-    const ext = dotIdx !== -1 ? file.name.substring(dotIdx) : "";
-    fileName = `${base}_${Date.now()}${ext}`;
+// ─── File Upload Helper (Cloudinary) ─────────────────────────────────────────
+async function uploadFile(file: File): Promise<string> {
+  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+  const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+
+  if (!cloudName || !uploadPreset) {
+    throw new Error("Cloudinary belum dikonfigurasi. Isi NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME dan NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET di .env.local");
   }
 
-  const storageRef = ref(storage, `assets/${fileName}`);
-  const snapshot = await uploadBytes(storageRef, uploadData);
-  const downloadURL = await getDownloadURL(snapshot.ref);
-  return downloadURL;
+  const isImage = file.type.startsWith("image/");
+  let uploadBlob: Blob | File = file;
+
+  // Compress images to WebP before upload
+  if (isImage) {
+    try {
+      uploadBlob = await compressImage(file);
+    } catch (err) {
+      console.warn("Gagal mengompresi, upload file asli:", err);
+    }
+  }
+
+  const formData = new FormData();
+  formData.append("file", uploadBlob);
+  formData.append("upload_preset", uploadPreset);
+  formData.append("folder", "porto");
+
+  const resourceType = isImage ? "image" : "video";
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`,
+    { method: "POST", body: formData }
+  );
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || `Upload gagal (${res.status})`);
+  }
+
+  const data = await res.json();
+  return data.secure_url as string;
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -304,7 +314,7 @@ function ProjectsTab() {
         ) : (
           list.map(item => (
             <div key={item.id} className="flex items-center gap-4 p-3.5 rounded-xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-colors">
-              <img src={item.img} alt={item.title} className="w-16 h-12 object-cover rounded-lg shrink-0 bg-white/5" />
+              <img src={item.img || undefined} alt={item.title} className="w-16 h-12 object-cover rounded-lg shrink-0 bg-white/5" />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <p className="text-white font-medium text-sm truncate">{item.title}</p>
@@ -644,7 +654,7 @@ function CertificatesTab() {
         <div className="space-y-3">
           {items.map(item => (
             <div key={item.id} className="flex items-center gap-4 p-4 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors">
-              <img src={item.img} alt={item.title} className="w-16 h-12 object-cover rounded-lg shrink-0 bg-white/5" />
+              <img src={item.img || undefined} alt={item.title} className="w-16 h-12 object-cover rounded-lg shrink-0 bg-white/5" />
               <div className="flex-1 min-w-0">
                 <p className="text-white font-medium text-sm truncate">{item.title}</p>
                 <p className="text-white/40 text-xs mt-0.5">{item.issuer} · {item.date}</p>

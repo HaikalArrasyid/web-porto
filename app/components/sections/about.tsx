@@ -39,7 +39,7 @@ export default function About() {
             className="flex-1 text-center md:text-left flex flex-col items-center md:items-start max-w-2xl"
           >
             <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white mb-6 tracking-tight">
-              Haikal Arrasyid
+              M. Haikal Arrasyid
             </h2>
 
             <p className="text-white/80 text-base md:text-lg leading-relaxed mb-6 font-light">

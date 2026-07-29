@@ -14,14 +14,14 @@ export default function Hero() {
           <div className="relative inline-block">
             <div className="absolute -inset-2 rounded-2xl bg-red-400/25 blur-xl -z-10 w-full mx-auto lg:mx-0" />
             <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold text-white">
-              Full Stack
+              Hello, I am
             </h1>
           </div>
 
           <div className="relative inline-block mt-2">
             <div className="absolute -inset-2 rounded-2xl bg-red-400/25 blur-xl -z-10 w-full mx-auto lg:mx-0" />
             <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold text-red-400">
-              Developer
+              Haikal Arrasyid
             </h1>
           </div>
 
