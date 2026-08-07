@@ -8,26 +8,117 @@ import Link from "next/link";
 // ─── Tech Stack Icon Helper ──────────────────────────────────────────────────
 const getTechIcon = (skill: string) => {
   const s = skill.toLowerCase().trim();
-  if (s.includes("html")) return "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg";
-  if (s.includes("css")) return "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg";
-  if (s.includes("javascript") || s === "js") return "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg";
-  if (s.includes("typescript") || s === "ts") return "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg";
-  if (s.includes("react")) return "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg";
-  if (s.includes("next")) return "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg";
-  if (s.includes("tailwind")) return "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg";
-  if (s.includes("node")) return "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg";
-  if (s.includes("express")) return "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg";
-  if (s.includes("postgres")) return "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg";
-  if (s.includes("firebase")) return "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-original.svg";
+  const devicon = (name: string) => `https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${name}/${name}-original.svg`;
+  const simple = (name: string) => `https://cdn.simpleicons.org/${name}`;
+
+  // ── Frontend ──
+  if (s.includes("html")) return devicon("html5");
+  if (s.includes("css") && !s.includes("tailwind")) return devicon("css3");
+  if (s === "js" || s.includes("javascript")) return devicon("javascript");
+  if (s === "ts" || s.includes("typescript")) return devicon("typescript");
+  if (s.includes("react") && !s.includes("native")) return devicon("react");
+  if (s.includes("react native")) return devicon("react");
+  if (s.includes("next")) return devicon("nextjs");
+  if (s.includes("vue")) return devicon("vuejs");
+  if (s.includes("nuxt")) return devicon("nuxtjs");
+  if (s.includes("tailwind")) return devicon("tailwindcss");
+  if (s.includes("bootstrap")) return devicon("bootstrap");
+  if (s.includes("sass") || s.includes("scss")) return devicon("sass");
+  if (s.includes("vite")) return devicon("vitejs");
+  if (s.includes("svelte")) return devicon("svelte");
+  if (s.includes("astro")) return simple("astro");
+  if (s.includes("framer")) return simple("framer");
+
+  // ── Backend ──
+  if (s.includes("nestjs") || s === "nest") return devicon("nestjs");
+  if (s.includes("node")) return devicon("nodejs");
+  if (s.includes("express")) return devicon("express");
+  if (s.includes("laravel")) return devicon("laravel");
+  if (s.includes("django")) return devicon("django");
+  if (s.includes("flask")) return devicon("flask");
+  if (s.includes("fastapi")) return devicon("fastapi");
+  if (s.includes("spring")) return devicon("spring");
+  if (s.includes("php")) return devicon("php");
+  if (s.includes("python")) return devicon("python");
+  if (s.includes("golang") || s === "go") return devicon("go");
+  if (s.includes("rust")) return devicon("rust");
+
+  // ── Database ──
+  if (s.includes("postgres")) return devicon("postgresql");
+  if (s.includes("mysql")) return devicon("mysql");
+  if (s.includes("mongodb") || s === "mongo") return devicon("mongodb");
+  if (s.includes("redis")) return devicon("redis");
+  if (s.includes("sqlite")) return devicon("sqlite");
+  if (s.includes("prisma")) return simple("prisma");
+  if (s.includes("supabase")) return simple("supabase");
+
+  // ── Cloud & Storage ──
+  if (s.includes("cloudinary")) return simple("cloudinary");
+  if (s.includes("firebase")) return devicon("firebase");
+  if (s.includes("aws") || s.includes("amazon")) return simple("amazonwebservices");
+  if (s.includes("gcp") || s.includes("google cloud")) return simple("googlecloud");
+  if (s.includes("azure")) return devicon("azure");
+  if (s.includes("vercel")) return simple("vercel");
+  if (s.includes("netlify")) return simple("netlify");
+  if (s.includes("railway")) return simple("railway");
+  if (s.includes("docker")) return devicon("docker");
+  if (s.includes("kubernetes")) return devicon("kubernetes");
+
+  // ── AI Tools ──
+  if (s.includes("antigravity")) return simple("googlegemini"); // Google DeepMind product
+  if (s === "claude" || s.startsWith("claude ")) return simple("claude"); // Claude's own logo
+  if (s.includes("anthropic")) return simple("anthropic");
+  if (s.includes("gemini")) return simple("googlegemini");
+  if (s.includes("chatgpt") || s.includes("openai")) return simple("openai");
+  if (s.includes("copilot")) return simple("githubcopilot");
+  if (s.includes("cursor")) return simple("cursor");
+
+
+
+  // ── Tools & Dev ──
+  if (s.includes("git") && !s.includes("github")) return devicon("git");
+  if (s.includes("github")) return devicon("github");
+  if (s.includes("gitlab")) return devicon("gitlab");
+  if (s.includes("vscode") || s.includes("vs code") || s.includes("visual studio code")) return devicon("vscode");
+  if (s.includes("postman")) return devicon("postman");
+  if (s.includes("insomnia")) return simple("insomnia");
+  if (s.includes("linux")) return devicon("linux");
+  if (s.includes("npm")) return devicon("npm");
+  if (s.includes("yarn")) return devicon("yarn");
+  if (s.includes("pnpm")) return simple("pnpm");
+
+  // ── Design & Creative ──
   if (s.includes("figma")) return "/icons/figma.svg";
   if (s.includes("lightroom")) return "/icons/lightroom.svg";
-  if (s.includes("davinci")) return "/icons/davinci.svg";
-  if (s.includes("capcut")) return "/icons/capcut.svg";
+  if (s.includes("davinci") || s.includes("da vinci")) return "/icons/davinci.svg";
+  if (s.includes("capcut") || s.includes("cap cut")) return "/icons/capcut.svg";
   if (s.includes("canva")) return "/icons/canva.svg";
-  if (s.includes("git") && !s.includes("github")) return "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg";
-  if (s.includes("github")) return "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg";
+  if (s.includes("photoshop")) return devicon("photoshop");
+  if (s.includes("illustrator")) return devicon("illustrator");
+  if (s.includes("premiere")) return devicon("premierepro");
+  if (s.includes("after effect") || s === "ae") return devicon("aftereffects");
+  if (s.includes("blender")) return devicon("blender");
+
   return null;
 };
+
+// Icons that are black/dark by default — need CSS invert on dark backgrounds
+const isDarkIcon = (skill: string) => {
+  const s = skill.toLowerCase().trim();
+  return (
+    s.includes("github") ||
+    s.includes("vercel") ||
+    s.includes("railway") ||
+    s.includes("nextjs") || s.includes("next") ||
+    s.includes("express") ||
+    s.includes("github copilot") || s.includes("copilot") ||
+    s.includes("cursor") ||
+    s.includes("anthropic") ||
+    s === "claude" || s.startsWith("claude ")
+  );
+};
+
+
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type Tab = "projects" | "certificates" | "tech";
@@ -410,7 +501,12 @@ export default function Portofolio() {
                         return (
                           <div key={skill} className="flex flex-col items-center justify-center p-3 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.06] hover:border-red-500/20 transition-all duration-300 aspect-square text-center">
                             {iconUrl ? (
-                              <img src={iconUrl} alt={skill} className="w-8 h-8 object-contain mb-2" />
+                              <img
+                                src={iconUrl}
+                                alt={skill}
+                                className="w-8 h-8 object-contain mb-2"
+                                style={isDarkIcon(skill) ? { filter: "invert(1) brightness(2)" } : undefined}
+                              />
                             ) : (
                               <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-2 text-red-400 font-bold text-xs shrink-0">
                                 {skill.slice(0, 2).toUpperCase()}
