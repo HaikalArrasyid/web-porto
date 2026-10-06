@@ -42,3 +42,6 @@ next-env.d.ts
 
 # firebase admin credentials (JANGAN commit!)
 **/serviceAccountKey.json
+# Ignore large video files
+public/assets/*.mov
+public/assets/*.mp4

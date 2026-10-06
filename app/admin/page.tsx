@@ -3,12 +3,12 @@
 import { useState, useEffect, useCallback } from "react";
 import {
   collection, getDocs, addDoc, updateDoc, deleteDoc,
-  doc, query, orderBy
+  doc, query, orderBy, setDoc
 } from "firebase/firestore";
 import { db } from "@/firebase";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-type AdminTab = "projects" | "certificates" | "tech";
+type AdminTab = "projects" | "certificates" | "tech" | "settings";
 
 type Project = {
   id: string; title: string; desc: string;
@@ -201,7 +201,13 @@ async function uploadFile(file: File): Promise<string> {
   formData.append("upload_preset", uploadPreset);
   formData.append("folder", "porto");
 
-  const resourceType = isImage ? "image" : "video";
+  let resourceType = "auto";
+  if (!isImage && !file.type.startsWith("video/")) {
+    // If it's a pdf or other doc, auto sometimes categorizes as image depending on settings,
+    // but 'raw' or 'auto' works. Let's use 'auto'.
+    resourceType = "auto";
+  }
+
   const res = await fetch(
     `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`,
     { method: "POST", body: formData }
@@ -856,6 +862,115 @@ function TechStackTab() {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
+// SETTINGS TAB
+// ══════════════════════════════════════════════════════════════════════════════
+function SettingsTab() {
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [cvUrl, setCvUrl] = useState("");
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const snap = await getDocs(query(collection(db, "settings")));
+      const profileDoc = snap.docs.find(d => d.id === "profile");
+      if (profileDoc) {
+        setCvUrl(profileDoc.data().cvUrl || "");
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      await updateDoc(doc(db, "settings", "profile"), { cvUrl }).catch(async () => {
+        // if not exists, setDoc instead
+        await setDoc(doc(db, "settings", "profile"), { cvUrl });
+      });
+      alert("Settings saved!");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert("Failed to save: " + err.message);
+      } else {
+        alert("Failed to save.");
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-xl font-bold text-white">Settings & Profile</h2>
+          <p className="text-white/30 text-sm mt-0.5">Manage your CV and global configurations</p>
+        </div>
+      </div>
+      
+      {loading ? (
+        <div className="h-40 rounded-xl bg-white/3 animate-pulse" />
+      ) : (
+        <form onSubmit={handleSave} className="bg-white/[0.02] border border-white/5 rounded-2xl p-6.5 flex flex-col gap-5">
+          <Field label="CV URL (Upload or paste link)">
+            <div className="flex flex-col gap-3">
+              <input 
+                type="text" 
+                className={inputCls} 
+                value={cvUrl} 
+                onChange={e => setCvUrl(e.target.value)} 
+                placeholder="https://..." 
+              />
+              <div className="flex items-center gap-3">
+                <span className="text-white/40 text-xs">Or upload PDF:</span>
+                <input
+                  type="file"
+                  accept="application/pdf"
+                  className="text-xs text-white/50 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-white/10 file:text-white/70 hover:file:bg-white/20 transition-all cursor-pointer"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      setUploading(true);
+                      try {
+                        const url = await uploadFile(file);
+                        setCvUrl(url);
+                      } catch (err: unknown) {
+                        if (err instanceof Error) {
+                          alert(err.message || "Upload gagal");
+                        } else {
+                          alert("Upload gagal");
+                        }
+                      } finally {
+                        setUploading(false);
+                      }
+                    }
+                  }}
+                />
+                {uploading && <span className="text-red-400 text-xs animate-pulse">Mengunggah file...</span>}
+              </div>
+            </div>
+          </Field>
+          
+          <div className="pt-2">
+            <button type="submit" disabled={saving || uploading} className="px-6 py-2.5 rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600 disabled:opacity-50 transition-all">
+              {saving ? "Menyimpan..." : "Simpan Pengaturan"}
+            </button>
+          </div>
+        </form>
+      )}
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
 // MAIN ADMIN PAGE
 // ══════════════════════════════════════════════════════════════════════════════
 export default function AdminPage() {
@@ -889,6 +1004,16 @@ export default function AdminPage() {
         </svg>
       ),
     },
+    {
+      key: "settings",
+      label: "Settings",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 011.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.56.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.893.149c-.425.07-.765.383-.93.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 01-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.397.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 01-.12-1.45l.527-.737c.25-.35.273-.806.108-1.204-.165-.397-.505-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.107-1.204l-.527-.738a1.125 1.125 0 01.12-1.45l.773-.773a1.125 1.125 0 011.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      ),
+    },
   ];
 
   return (
@@ -915,6 +1040,7 @@ export default function AdminPage() {
       {tab === "projects" && <ProjectsTab />}
       {tab === "certificates" && <CertificatesTab />}
       {tab === "tech" && <TechStackTab />}
+      {tab === "settings" && <SettingsTab />}
     </div>
   );
 }

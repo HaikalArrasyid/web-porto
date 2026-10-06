@@ -1,26 +1,33 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { db } from "@/firebase";
 import { motion } from "framer-motion";
 
 export default function About() {
   const [projectCount, setProjectCount] = useState(8);
   const [certCount, setCertCount] = useState(10);
+  const [cvUrl, setCvUrl] = useState("/assets/CV-ATS-Haikal.pdf");
 
   useEffect(() => {
-    const fetchCounts = async () => {
+    const fetchData = async () => {
       try {
         const projSnap = await getDocs(collection(db, "projects"));
         if (!projSnap.empty) setProjectCount(projSnap.size);
+        
         const certSnap = await getDocs(collection(db, "certificates"));
         if (!certSnap.empty) setCertCount(certSnap.size);
+
+        const profileDoc = await getDoc(doc(db, "settings", "profile"));
+        if (profileDoc.exists() && profileDoc.data().cvUrl) {
+          setCvUrl(profileDoc.data().cvUrl);
+        }
       } catch (e) {
-        console.error("Failed to fetch dynamic stats:", e);
+        console.error("Failed to fetch dynamic stats or settings:", e);
       }
     };
-    fetchCounts();
+    fetchData();
   }, []);
 
   return (
@@ -58,8 +65,10 @@ export default function About() {
             {/* Buttons Row */}
             <div className="flex flex-wrap gap-4 justify-center md:justify-start w-full">
               <a
-                href="/CV.pdf"
+                href={cvUrl}
                 download
+                target="_blank"
+                rel="noreferrer"
                 className="flex items-center gap-2 px-6 py-3 rounded-xl bg-red-500 text-white font-semibold text-sm hover:bg-red-650 shadow-lg shadow-red-500/20 transition-all duration-300"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4">
