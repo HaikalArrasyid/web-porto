@@ -4,11 +4,31 @@ import React, { useState, useEffect } from "react";
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { db } from "@/firebase";
 import { motion } from "framer-motion";
+import { getDownloadableUrl } from "@/lib/utils";
 
 export default function About() {
   const [projectCount, setProjectCount] = useState(8);
   const [certCount, setCertCount] = useState(10);
   const [cvUrl, setCvUrl] = useState("/assets/CV-ATS-Haikal.pdf");
+
+  const handleDownload = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    if (!cvUrl) return;
+    try {
+      const response = await fetch(cvUrl);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = "CV-ATS-Haikal.pdf";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch {
+      window.open(cvUrl, "_blank");
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -66,10 +86,8 @@ export default function About() {
             <div className="flex flex-wrap gap-4 justify-center md:justify-start w-full">
               <a
                 href={cvUrl}
-                download
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-red-500 text-white font-semibold text-sm hover:bg-red-650 shadow-lg shadow-red-500/20 transition-all duration-300"
+                onClick={handleDownload}
+                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-red-500 text-white font-semibold text-sm hover:bg-red-650 shadow-lg shadow-red-500/20 transition-all duration-300 cursor-pointer"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
