@@ -11,25 +11,6 @@ export default function About() {
   const [certCount, setCertCount] = useState(10);
   const [cvUrl, setCvUrl] = useState("/assets/CV-ATS-Haikal.pdf");
 
-  const handleDownload = async (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    if (!cvUrl) return;
-    try {
-      const response = await fetch(cvUrl);
-      const blob = await response.blob();
-      const blobUrl = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = blobUrl;
-      link.download = "CV-ATS-Haikal.pdf";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(blobUrl);
-    } catch {
-      window.open(cvUrl, "_blank");
-    }
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -85,8 +66,8 @@ export default function About() {
             {/* Buttons Row */}
             <div className="flex flex-wrap gap-4 justify-center md:justify-start w-full">
               <a
-                href={cvUrl}
-                onClick={handleDownload}
+                href={getDownloadableUrl(cvUrl)}
+                download="CV-ATS-Haikal.pdf"
                 className="flex items-center gap-2 px-6 py-3 rounded-xl bg-red-500 text-white font-semibold text-sm hover:bg-red-650 shadow-lg shadow-red-500/20 transition-all duration-300 cursor-pointer"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4">
