@@ -41,9 +41,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   if (pathname === "/admin/login") return <>{children}</>;
 
   return (
-    <div className="min-h-screen bg-[#0d0214] flex flex-col">
+    <div className="min-h-screen bg-[#0d0214] flex flex-col relative overflow-hidden">
+      {/* Background ambient glow */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-red-500/5 rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-red-500/5 rounded-full blur-3xl pointer-events-none -z-10" />
+
       {/* Admin Top Bar */}
-      <header className="sticky top-0 z-40 border-b border-white/5 bg-[#0d0214]/90 backdrop-blur-md">
+      <header className="sticky top-0 z-40 border-b border-white/5 bg-[#0d0214]/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center">

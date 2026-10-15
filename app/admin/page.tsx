@@ -32,7 +32,7 @@ type TechCategory = {
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function Badge({ children }: { children: React.ReactNode }) {
   return (
-    <span className="px-2 py-0.5 text-[10px] rounded-md bg-white/5 border border-white/8 text-white/50">
+    <span className="px-2.5 py-1 text-[10px] rounded-lg bg-white/[0.04] border border-white/10 text-white/60 font-medium">
       {children}
     </span>
   );
@@ -42,10 +42,10 @@ function ActionBtn({ onClick, variant, children }: {
   onClick: () => void; variant: "edit" | "delete"; children: React.ReactNode;
 }) {
   const cls = variant === "edit"
-    ? "border-white/10 text-white/50 hover:text-white hover:border-white/30"
-    : "border-red-500/20 text-red-400/60 hover:text-red-400 hover:border-red-400/40";
+    ? "border-white/10 text-white/60 hover:text-white hover:border-white/30 bg-white/[0.02]"
+    : "border-red-500/20 text-red-400/80 hover:text-red-400 hover:border-red-400/40 bg-red-500/5";
   return (
-    <button onClick={onClick} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs transition-all duration-200 ${cls}`}>
+    <button onClick={onClick} className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl border text-xs font-medium transition-all duration-200 cursor-pointer ${cls}`}>
       {children}
     </button>
   );
@@ -53,19 +53,19 @@ function ActionBtn({ onClick, variant, children }: {
 
 function SectionHeader({ title, count, onAdd }: { title: string; count: number; onAdd: () => void }) {
   return (
-    <div className="flex items-center justify-between mb-6">
+    <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/5">
       <div>
-        <h2 className="text-xl font-bold text-white">{title}</h2>
-        <p className="text-white/30 text-sm mt-0.5">{count} item{count !== 1 ? "s" : ""}</p>
+        <h2 className="text-2xl font-extrabold text-white tracking-tight">{title}</h2>
+        <p className="text-white/40 text-sm mt-1">{count} item{count !== 1 ? "s" : ""} terdaftar</p>
       </div>
       <button
         onClick={onAdd}
-        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500 text-white text-sm font-medium hover:bg-red-600 transition-all duration-200"
+        className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-650 shadow-lg shadow-red-500/20 transition-all duration-200 cursor-pointer"
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4">
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
         </svg>
-        Tambah
+        Tambah Baru
       </button>
     </div>
   );
@@ -77,28 +77,29 @@ function Modal({ title, onClose, onSubmit, loading, children }: {
   loading: boolean; children: React.ReactNode;
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm" onClick={onClose}>
+      <div className="absolute inset-0 bg-black/80" />
       <div
-        className="relative z-10 w-full max-w-lg bg-[#120619] border border-white/10 rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
+        className="relative z-10 w-full max-w-lg bg-[#0d0214] border border-white/10 rounded-3xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
-          <h3 className="text-white font-semibold">{title}</h3>
-          <button onClick={onClose} className="p-1.5 rounded-lg text-white/40 hover:text-white transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
+        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-red-500/50 to-transparent" />
+        <div className="flex items-center justify-between px-6 py-5 border-b border-white/5">
+          <h3 className="text-white font-bold text-base">{title}</h3>
+          <button onClick={onClose} className="p-2 rounded-xl text-white/40 hover:text-white bg-white/[0.02] hover:bg-white/[0.06] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
-        <form onSubmit={onSubmit} className="flex flex-col gap-4 p-6 overflow-y-auto flex-1">
+        <form onSubmit={onSubmit} className="flex flex-col gap-5 p-6 overflow-y-auto flex-1 custom-scrollbar">
           {children}
-          <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-white/10 text-white/50 text-sm hover:text-white transition-colors">
+          <div className="flex gap-3 pt-4 border-t border-white/5">
+            <button type="button" onClick={onClose} className="flex-1 py-3 rounded-xl border border-white/10 text-white/60 text-sm font-medium hover:text-white hover:bg-white/[0.04] transition-all cursor-pointer">
               Batal
             </button>
-            <button type="submit" disabled={loading} className="flex-1 py-2.5 rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600 disabled:opacity-50 transition-all">
-              {loading ? "Menyimpan..." : "Simpan"}
+            <button type="submit" disabled={loading} className="flex-1 py-3 rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-650 shadow-lg shadow-red-500/20 disabled:opacity-50 transition-all cursor-pointer">
+              {loading ? "Menyimpan..." : "Simpan Perubahan"}
             </button>
           </div>
         </form>
@@ -108,8 +109,8 @@ function Modal({ title, onClose, onSubmit, loading, children }: {
 }
 
 // ─── Form Field Components ────────────────────────────────────────────────────
-const inputCls = "w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder-white/20 focus:outline-none focus:border-red-400/40 transition-all";
-const labelCls = "text-xs text-white/50 font-medium mb-1 block";
+const inputCls = "w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/10 text-white text-sm placeholder-white/20 focus:outline-none focus:border-red-500/50 focus:bg-white/[0.07] transition-all";
+const labelCls = "text-xs text-white/50 font-semibold tracking-wide uppercase mb-1.5 block";
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return <div className="flex flex-col gap-1"><label className={labelCls}>{label}</label>{children}</div>;
@@ -120,21 +121,22 @@ function DeleteConfirm({ name, onConfirm, onCancel }: {
   name: string; onConfirm: () => void; onCancel: () => void;
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onCancel}>
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
-      <div className="relative z-10 bg-[#120619] border border-white/10 rounded-2xl p-6 max-w-sm w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
-        <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-4 mx-auto">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6 text-red-400">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm" onClick={onCancel}>
+      <div className="absolute inset-0 bg-black/80" />
+      <div className="relative z-10 bg-[#0d0214] border border-white/10 rounded-3xl p-8 max-w-sm w-full shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-red-500/50 to-transparent" />
+        <div className="w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-5 mx-auto">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-7 h-7 text-red-400">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
           </svg>
         </div>
-        <h3 className="text-white font-bold text-center mb-2">Hapus Item?</h3>
-        <p className="text-white/40 text-sm text-center mb-6">
-          "<span className="text-white/60">{name}</span>" akan dihapus permanen.
+        <h3 className="text-white font-bold text-lg text-center mb-2">Hapus Item?</h3>
+        <p className="text-white/50 text-sm text-center mb-8 leading-relaxed">
+          "<span className="text-white font-medium">{name}</span>" akan dihapus secara permanen dari database.
         </p>
         <div className="flex gap-3">
-          <button onClick={onCancel} className="flex-1 py-2.5 rounded-xl border border-white/10 text-white/50 text-sm hover:text-white transition-colors">Batal</button>
-          <button onClick={onConfirm} className="flex-1 py-2.5 rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition-colors">Hapus</button>
+          <button onClick={onCancel} className="flex-1 py-3 rounded-xl border border-white/10 text-white/60 text-sm font-medium hover:text-white hover:bg-white/[0.04] transition-all cursor-pointer">Batal</button>
+          <button onClick={onConfirm} className="flex-1 py-3 rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-650 shadow-lg shadow-red-500/20 transition-all cursor-pointer">Hapus</button>
         </div>
       </div>
     </div>
@@ -1019,15 +1021,15 @@ export default function AdminPage() {
   return (
     <div>
       {/* Tab Nav */}
-      <div className="flex gap-2 mb-8 border-b border-white/5 pb-4">
+      <div className="flex flex-wrap gap-2.5 mb-10 border-b border-white/5 pb-5">
         {tabs.map(t => (
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+            className={`flex items-center gap-2.5 px-5 py-3 rounded-2xl text-sm font-semibold transition-all duration-200 cursor-pointer ${
               tab === t.key
-                ? "bg-red-500/10 border border-red-500/20 text-red-400"
-                : "text-white/40 hover:text-white/70 border border-transparent"
+                ? "bg-red-500/15 border border-red-500/30 text-red-400 shadow-lg shadow-red-500/10"
+                : "bg-white/[0.02] text-white/50 hover:text-white hover:bg-white/[0.05] border border-white/5"
             }`}
           >
             {t.icon}

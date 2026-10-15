@@ -46,37 +46,41 @@ export default function AdminLogin() {
         </div>
 
         {/* Login Card */}
-        <div className="bg-white/[0.03] border border-white/8 rounded-3xl p-8 backdrop-blur-sm">
+        <div className="bg-white/[0.02] border border-white/10 rounded-3xl p-8 backdrop-blur-xl shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-red-500/40 to-transparent" />
           <form onSubmit={handleLogin} className="flex flex-col gap-5">
             {/* Email */}
             <div className="flex flex-col gap-2">
-              <label className="text-sm text-white/60 font-medium">Email</label>
+              <label className="text-xs text-white/50 font-medium tracking-wide uppercase">Email</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@email.com"
                 required
-                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/20 text-sm focus:outline-none focus:border-red-400/50 focus:bg-white/8 transition-all duration-200"
+                className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder-white/20 text-sm focus:outline-none focus:border-red-500/50 focus:bg-white/[0.07] transition-all duration-200"
               />
             </div>
 
             {/* Password */}
             <div className="flex flex-col gap-2">
-              <label className="text-sm text-white/60 font-medium">Password</label>
+              <label className="text-xs text-white/50 font-medium tracking-wide uppercase">Password</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
-                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/20 text-sm focus:outline-none focus:border-red-400/50 focus:bg-white/8 transition-all duration-200"
+                className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder-white/20 text-sm focus:outline-none focus:border-red-500/50 focus:bg-white/[0.07] transition-all duration-200"
               />
             </div>
 
             {/* Error */}
             {error && (
-              <div className="px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+              <div className="px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4 shrink-0">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                </svg>
                 {error}
               </div>
             )}
@@ -85,9 +89,9 @@ export default function AdminLogin() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded-xl bg-red-500 text-white font-semibold text-sm hover:bg-red-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+              className="w-full py-3 rounded-xl bg-red-500 text-white font-semibold text-sm hover:bg-red-600 shadow-lg shadow-red-500/20 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed mt-2 cursor-pointer"
             >
-              {loading ? "Masuk..." : "Masuk ke Admin Panel"}
+              {loading ? "Memproses..." : "Masuk ke Admin Panel"}
             </button>
           </form>
         </div>
