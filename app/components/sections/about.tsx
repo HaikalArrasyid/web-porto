@@ -31,6 +31,26 @@ export default function About() {
     fetchData();
   }, []);
 
+  const handleDownloadCV = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const finalUrl = getDownloadableUrl(cvUrl);
+    try {
+      const res = await fetch(finalUrl);
+      if (!res.ok) throw new Error("Network response was not ok");
+      const blob = await res.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = "CV-ATS-Haikal.pdf";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (err) {
+      window.open(finalUrl, "_blank");
+    }
+  };
+
   return (
     <section id="about" className="py-12 md:py-20 -mt-8 md:-mt-12 lg:-mt-16 flex items-center justify-center px-6 relative overflow-hidden">
       <div className="container mx-auto flex flex-col gap-12 max-w-6xl">
@@ -67,6 +87,7 @@ export default function About() {
             <div className="flex flex-wrap gap-4 justify-center md:justify-start w-full">
               <a
                 href={getDownloadableUrl(cvUrl)}
+                onClick={handleDownloadCV}
                 download="CV-ATS-Haikal.pdf"
                 className="flex items-center gap-2 px-6 py-3 rounded-xl bg-red-500 text-white font-semibold text-sm hover:bg-red-650 shadow-lg shadow-red-500/20 transition-all duration-300 cursor-pointer"
               >

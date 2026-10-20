@@ -187,6 +187,8 @@ async function uploadFile(file: File): Promise<string> {
   }
 
   const isImage = file.type.startsWith("image/");
+  const isVideo = file.type.startsWith("video/");
+  const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
   let uploadBlob: Blob | File = file;
 
   // Compress images to WebP before upload
@@ -204,9 +206,13 @@ async function uploadFile(file: File): Promise<string> {
   formData.append("folder", "porto");
 
   let resourceType = "auto";
-  if (!isImage && !file.type.startsWith("video/")) {
-    // If it's a pdf or other doc, auto sometimes categorizes as image depending on settings,
-    // but 'raw' or 'auto' works. Let's use 'auto'.
+  if (isImage) {
+    resourceType = "image";
+  } else if (isVideo) {
+    resourceType = "video";
+  } else if (isPdf) {
+    resourceType = "raw";
+  } else {
     resourceType = "auto";
   }
 
